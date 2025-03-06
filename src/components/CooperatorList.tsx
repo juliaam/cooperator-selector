@@ -12,6 +12,7 @@ interface CooperatorListProps {
   selectedCooperatorIds: string[];
   onToggle: (id: string) => void;
   onAddException: (id: string) => void;
+  onAddAssignment: (id: string) => void;
   className?: string;
 }
 
@@ -20,6 +21,7 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
   selectedCooperatorIds,
   onToggle,
   onAddException,
+  onAddAssignment,
   className,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,6 +94,7 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
                 isSelected={selectedCooperatorIds.includes(cooperator.id)}
                 onToggle={onToggle}
                 onAddException={onAddException}
+                onAddAssignment={onAddAssignment}
               />
             ))
           ) : (

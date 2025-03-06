@@ -2,10 +2,13 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 import CooperatorList from '@/components/CooperatorList';
 import ScaleHeader from '@/components/ScaleHeader';
 import ExceptionList from '@/components/ExceptionList';
 import ExceptionModal, { ExceptionData } from '@/components/ExceptionModal';
+import ScheduleAssignmentList from '@/components/ScheduleAssignmentList';
+import ScheduleAssignmentModal, { AssignmentData } from '@/components/ScheduleAssignmentModal';
 import { Cooperator } from '@/components/CooperatorCard';
 
 // Mock data for initial cooperators

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { X, Clock } from "lucide-react";
+import { X, Clock, Calendar } from "lucide-react";
 
 export interface Cooperator {
   id: string;
@@ -12,6 +12,7 @@ export interface Cooperator {
   role: string;
   avatarUrl?: string;
   hasExceptions?: boolean;
+  hasAssignments?: boolean;
 }
 
 interface CooperatorCardProps {
@@ -19,6 +20,7 @@ interface CooperatorCardProps {
   isSelected: boolean;
   onToggle: (id: string) => void;
   onAddException: (id: string) => void;
+  onAddAssignment: (id: string) => void;
   className?: string;
 }
 
@@ -27,6 +29,7 @@ const CooperatorCard: React.FC<CooperatorCardProps> = ({
   isSelected,
   onToggle,
   onAddException,
+  onAddAssignment,
   className,
 }) => {
   return (
@@ -35,6 +38,8 @@ const CooperatorCard: React.FC<CooperatorCardProps> = ({
         "relative flex items-center p-4 hover-lift transition-all-200",
         isSelected ? "bg-secondary border-primary/30" : "opacity-60",
         cooperator.hasExceptions && "ring-1 ring-amber-400",
+        cooperator.hasAssignments && !cooperator.hasExceptions && "ring-1 ring-green-400",
+        cooperator.hasExceptions && cooperator.hasAssignments && "ring-1 ring-blue-400",
         className
       )}
     >
@@ -45,6 +50,12 @@ const CooperatorCard: React.FC<CooperatorCardProps> = ({
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
             <Clock className="h-3 w-3 mr-1" />
             Exceção
+          </Badge>
+        )}
+        {cooperator.hasAssignments && (
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            <Calendar className="h-3 w-3 mr-1" />
+            Agendado
           </Badge>
         )}
       </div>
@@ -85,6 +96,14 @@ const CooperatorCard: React.FC<CooperatorCardProps> = ({
           aria-label="Adicionar exceção"
         >
           <Clock className="h-4 w-4" />
+        </button>
+        
+        <button
+          onClick={() => onAddAssignment(cooperator.id)}
+          className="p-1.5 rounded-full text-muted-foreground hover:bg-secondary-foreground/10 transition-colors"
+          aria-label="Agendar cooperador"
+        >
+          <Calendar className="h-4 w-4" />
         </button>
       </div>
     </Card>
