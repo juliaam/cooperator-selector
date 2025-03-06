@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,7 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
   className,
 }) => {
   return (
-    <Card className={cn("h-full flex flex-col", className)}>
+    <Card className={cn("flex flex-col h-full", className)}>
       <CardHeader className="pb-2 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
@@ -42,10 +43,10 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden p-2 pt-0">
-        <ScrollArea className="h-full pr-2">
+      <CardContent className="flex-1 p-2 pt-0 overflow-hidden">
+        <ScrollArea className="h-full">
           {exceptions.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-2 pr-2">
               {exceptions.map((exception) => {
                 const cooperator = cooperators.find(c => c.id === exception.cooperatorId);
                 

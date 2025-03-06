@@ -5,6 +5,7 @@ import ScaleHeader from '@/components/ScaleHeader';
 import ExceptionList from '@/components/ExceptionList';
 import ScheduleAssignmentList from '@/components/ScheduleAssignmentList';
 import { mockCooperators } from '@/hooks/useScheduleState';
+import { ExceptionData } from '@/components/ExceptionModal';
 
 interface ScaleLayoutProps {
   // Scale details
@@ -24,7 +25,7 @@ interface ScaleLayoutProps {
   onAddAssignmentForCooperator: (id: string) => void;
   
   // Exceptions
-  exceptions: Array<{ id: string; cooperatorId: string; type: string; date?: Date; weekday?: string }>;
+  exceptions: Array<ExceptionData & { id: string }>;
   onAddException: () => void;
   onRemoveException: (id: string) => void;
   
@@ -62,8 +63,8 @@ const ScaleLayout: React.FC<ScaleLayoutProps> = ({
   onRemoveAssignment,
 }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-muted/30">
-      <div className="container mx-auto py-6 px-4 flex flex-col h-full max-h-screen">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-background to-muted/30 overflow-hidden">
+      <div className="container mx-auto py-4 px-4 flex flex-col h-full">
         <ScaleHeader
           scaleName={scaleName}
           onScaleNameChange={onScaleNameChange}
@@ -72,13 +73,13 @@ const ScaleLayout: React.FC<ScaleLayoutProps> = ({
           endDate={endDate}
           onEndDateChange={onEndDateChange}
           onSave={onSave}
-          className="mb-4"
+          className="mb-3"
         />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 flex-1 overflow-hidden">
           <div className="lg:col-span-2 overflow-hidden">
-            <div className="bg-card rounded-lg shadow-sm border p-4 h-full animate-fade-in flex flex-col">
-              <h2 className="text-xl font-semibold mb-2">Cooperadores</h2>
+            <div className="bg-card rounded-lg shadow-sm border h-full animate-fade-in flex flex-col">
+              <h2 className="text-xl font-semibold m-4 mb-2">Cooperadores</h2>
               <CooperatorList
                 allCooperators={cooperatorsWithFlags}
                 selectedCooperatorIds={selectedCooperatorIds}
@@ -90,7 +91,7 @@ const ScaleLayout: React.FC<ScaleLayoutProps> = ({
             </div>
           </div>
           
-          <div className="grid grid-rows-2 gap-4 h-full animate-fade-in animation-delay-100">
+          <div className="grid grid-rows-2 gap-3 h-full animate-fade-in animation-delay-100">
             <ExceptionList
               exceptions={exceptions}
               cooperators={mockCooperators}
