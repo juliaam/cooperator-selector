@@ -46,30 +46,30 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
 
   return (
     <div className={cn("flex flex-col h-full", className)}>
-      <div className="mb-4 flex items-center gap-4">
+      <div className="mb-2 flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar cooperadores..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-8 h-8 text-sm"
           />
         </div>
         
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "selected")} className="flex-shrink-0">
-          <TabsList>
-            <TabsTrigger value="all" className="gap-1.5">
-              <Users className="h-4 w-4" />
+          <TabsList className="h-8">
+            <TabsTrigger value="all" className="text-xs px-2 py-1 h-6 gap-1">
+              <Users className="h-3 w-3" />
               <span className="hidden sm:inline">Todos</span>
-              <span className="ml-1 text-xs bg-muted px-1.5 py-0.5 rounded-full">
+              <span className="ml-1 text-xs bg-muted px-1 py-0.5 rounded-full">
                 {allCooperators.length}
               </span>
             </TabsTrigger>
-            <TabsTrigger value="selected" className="gap-1.5">
-              <UserCheck className="h-4 w-4" />
+            <TabsTrigger value="selected" className="text-xs px-2 py-1 h-6 gap-1">
+              <UserCheck className="h-3 w-3" />
               <span className="hidden sm:inline">Selecionados</span>
-              <span className="ml-1 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+              <span className="ml-1 text-xs bg-primary/10 text-primary px-1 py-0.5 rounded-full">
                 {selectedCooperatorIds.length}
               </span>
             </TabsTrigger>
@@ -77,7 +77,7 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
         </Tabs>
       </div>
 
-      <div className="text-sm text-muted-foreground mb-4">
+      <div className="text-xs text-muted-foreground mb-2 px-0.5">
         {activeTab === "all" 
           ? `${filteredCooperators.length} cooperadores encontrados` 
           : `${selectedCooperatorIds.length} cooperadores selecionados`
@@ -85,7 +85,7 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
       </div>
       
       <ScrollArea className="flex-1 -mx-1 px-1">
-        <div className="space-y-3 pb-4">
+        <div className="space-y-2 pb-2">
           {displayCooperators.length > 0 ? (
             displayCooperators.map((cooperator) => (
               <CooperatorCard
@@ -98,12 +98,12 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
               />
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="bg-muted w-16 h-16 flex items-center justify-center rounded-full mb-4">
-                <Users className="h-8 w-8 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className="bg-muted w-12 h-12 flex items-center justify-center rounded-full mb-2">
+                <Users className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="font-medium mb-1">Nenhum cooperador encontrado</h3>
-              <p className="text-sm text-muted-foreground max-w-xs">
+              <h3 className="font-medium text-sm mb-1">Nenhum cooperador encontrado</h3>
+              <p className="text-xs text-muted-foreground max-w-xs">
                 {activeTab === "all" 
                   ? "Tente ajustar sua busca ou adicione novos cooperadores."
                   : "Selecione cooperadores para incluir na escala."

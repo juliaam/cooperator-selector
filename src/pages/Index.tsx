@@ -147,7 +147,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-muted/30">
-      <div className="container mx-auto py-8 px-4 flex flex-col h-full">
+      <div className="container mx-auto py-6 px-4 flex flex-col h-full max-h-screen">
         <ScaleHeader
           scaleName={scaleName}
           onScaleNameChange={setScaleName}
@@ -156,30 +156,31 @@ const Index = () => {
           endDate={endDate}
           onEndDateChange={setEndDate}
           onSave={handleSaveScale}
-          className="mb-8"
+          className="mb-4"
         />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
-          <div className="lg:col-span-2">
-            <div className="bg-card rounded-lg shadow-sm border p-6 h-full animate-fade-in">
-              <h2 className="text-xl font-semibold mb-4">Cooperadores</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
+          <div className="lg:col-span-2 overflow-hidden">
+            <div className="bg-card rounded-lg shadow-sm border p-4 h-full animate-fade-in flex flex-col">
+              <h2 className="text-xl font-semibold mb-2">Cooperadores</h2>
               <CooperatorList
                 allCooperators={cooperatorsWithFlags}
                 selectedCooperatorIds={selectedCooperatorIds}
                 onToggle={handleToggleCooperator}
                 onAddException={handleAddExceptionForCooperator}
                 onAddAssignment={handleAddAssignmentForCooperator}
-                className="h-[calc(100%-2.5rem)]"
+                className="flex-1 overflow-hidden"
               />
             </div>
           </div>
           
-          <div className="space-y-6 animate-fade-in animation-delay-100">
+          <div className="grid grid-rows-2 gap-4 h-full animate-fade-in animation-delay-100">
             <ExceptionList
               exceptions={exceptions}
               cooperators={mockCooperators}
               onAddException={handleAddException}
               onRemoveException={handleRemoveException}
+              className="h-full overflow-hidden"
             />
             
             <ScheduleAssignmentList
@@ -187,6 +188,7 @@ const Index = () => {
               cooperators={mockCooperators}
               onAddAssignment={() => setIsAssignmentModalOpen(true)}
               onRemoveAssignment={handleRemoveAssignment}
+              className="h-full overflow-hidden"
             />
           </div>
         </div>

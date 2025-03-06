@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,12 +27,12 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
   className,
 }) => {
   return (
-    <Card className={cn("h-full", className)}>
-      <CardHeader className="pb-3">
+    <Card className={cn("h-full flex flex-col", className)}>
+      <CardHeader className="pb-2 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-xl">Exceções</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg">Exceções</CardTitle>
+            <CardDescription className="text-xs">
               Adicione dias específicos ou recorrentes onde um cooperador não pode participar
             </CardDescription>
           </div>
@@ -43,10 +42,10 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[calc(100vh-20rem)] pr-4">
+      <CardContent className="flex-1 overflow-hidden p-2 pt-0">
+        <ScrollArea className="h-full pr-2">
           {exceptions.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {exceptions.map((exception) => {
                 const cooperator = cooperators.find(c => c.id === exception.cooperatorId);
                 
@@ -91,16 +90,16 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="bg-muted w-16 h-16 flex items-center justify-center rounded-full mb-4">
-                <Calendar className="h-8 w-8 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center h-full text-center py-4">
+              <div className="bg-muted w-12 h-12 flex items-center justify-center rounded-full mb-2">
+                <Calendar className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="font-medium mb-1">Nenhuma exceção adicionada</h3>
-              <p className="text-sm text-muted-foreground max-w-xs">
+              <h3 className="font-medium text-sm mb-1">Nenhuma exceção adicionada</h3>
+              <p className="text-xs text-muted-foreground max-w-xs mb-2">
                 Adicione exceções para dias específicos ou recorrentes onde um cooperador não pode participar da escala.
               </p>
-              <Button onClick={onAddException} variant="outline" size="sm" className="mt-4 gap-1">
-                <Plus className="h-4 w-4" />
+              <Button onClick={onAddException} variant="outline" size="sm" className="gap-1">
+                <Plus className="h-3 w-3" />
                 <span>Adicionar Exceção</span>
               </Button>
             </div>
