@@ -44,11 +44,19 @@ const Index = () => {
   // Exception modal
   const [isExceptionModalOpen, setIsExceptionModalOpen] = useState(false);
   const [selectedCooperatorForException, setSelectedCooperatorForException] = useState<string | undefined>(undefined);
+
+  // Assignments
+  const [assignments, setAssignments] = useState<AssignmentData[]>([]);
   
-  // Update cooperators with exception flags
-  const cooperatorsWithExceptionFlags = mockCooperators.map(cooperator => ({
+  // Assignment modal
+  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
+  const [selectedCooperatorForAssignment, setSelectedCooperatorForAssignment] = useState<string | undefined>(undefined);
+  
+  // Update cooperators with exception and assignment flags
+  const cooperatorsWithFlags = mockCooperators.map(cooperator => ({
     ...cooperator,
     hasExceptions: exceptions.some(exception => exception.cooperatorId === cooperator.id),
+    hasAssignments: assignments.some(assignment => assignment.cooperatorId === cooperator.id),
   }));
   
   // Toggle cooperator selection
@@ -92,6 +100,28 @@ const Index = () => {
     setExceptions(prev => prev.filter(exception => exception.id !== id));
     toast.success("Exceção removida");
   };
+
+  // Add assignment for a specific cooperator
+  const handleAddAssignmentForCooperator = (cooperatorId: string) => {
+    setSelectedCooperatorForAssignment(cooperatorId);
+    setIsAssignmentModalOpen(true);
+  };
+
+  // Save assignment
+  const handleSaveAssignment = (assignmentData: AssignmentData) => {
+    setAssignments(prev => [...prev, assignmentData]);
+    
+    const cooperator = mockCooperators.find(c => c.id === assignmentData.cooperatorId);
+    toast.success("Agendamento adicionado", {
+      description: `${cooperator?.name || "Cooperador"} agendado para ${format(assignmentData.date, 'dd/MM/yyyy')}.`,
+    });
+  };
+
+  // Remove assignment
+  const handleRemoveAssignment = (id: string) => {
+    setAssignments(prev => prev.filter(assignment => assignment.id !== id));
+    toast.success("Agendamento removido");
+  };
   
   // Save scale
   const handleSaveScale = () => {
@@ -134,21 +164,29 @@ const Index = () => {
             <div className="bg-card rounded-lg shadow-sm border p-6 h-full animate-fade-in">
               <h2 className="text-xl font-semibold mb-4">Cooperadores</h2>
               <CooperatorList
-                allCooperators={cooperatorsWithExceptionFlags}
+                allCooperators={cooperatorsWithFlags}
                 selectedCooperatorIds={selectedCooperatorIds}
                 onToggle={handleToggleCooperator}
                 onAddException={handleAddExceptionForCooperator}
+                onAddAssignment={handleAddAssignmentForCooperator}
                 className="h-[calc(100%-2.5rem)]"
               />
             </div>
           </div>
           
-          <div className="animate-fade-in animation-delay-100">
+          <div className="space-y-6 animate-fade-in animation-delay-100">
             <ExceptionList
               exceptions={exceptions}
               cooperators={mockCooperators}
               onAddException={handleAddException}
               onRemoveException={handleRemoveException}
+            />
+            
+            <ScheduleAssignmentList
+              assignments={assignments}
+              cooperators={mockCooperators}
+              onAddAssignment={() => setIsAssignmentModalOpen(true)}
+              onRemoveAssignment={handleRemoveAssignment}
             />
           </div>
         </div>
@@ -160,6 +198,14 @@ const Index = () => {
         onSave={handleSaveException}
         cooperators={mockCooperators}
         selectedCooperatorId={selectedCooperatorForException}
+      />
+      
+      <ScheduleAssignmentModal
+        isOpen={isAssignmentModalOpen}
+        onClose={() => setIsAssignmentModalOpen(false)}
+        onSave={handleSaveAssignment}
+        cooperators={mockCooperators}
+        selectedCooperatorId={selectedCooperatorForAssignment}
       />
     </div>
   );
