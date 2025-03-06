@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { useScheduleState, mockCooperators } from '@/hooks/useScheduleState';
-import ExceptionModal from '@/components/ExceptionModal';
-import ScheduleAssignmentModal from '@/components/ScheduleAssignmentModal';
-import ScaleLayout from '@/components/ScaleLayout';
+import React from "react";
+import { useScheduleState, mockCooperators } from "@/hooks/useScheduleState";
+import ExceptionModal from "@/components/ExceptionModal";
+import ScheduleAssignmentModal from "@/components/ScheduleAssignmentModal";
+import ScaleLayout from "@/components/ScaleLayout";
 
 const Index = () => {
   const {
@@ -14,12 +13,12 @@ const Index = () => {
     setStartDate,
     endDate,
     setEndDate,
-    
+
     // Cooperators
     cooperatorsWithFlags,
     selectedCooperatorIds,
     handleToggleCooperator,
-    
+
     // Exceptions
     exceptions,
     isExceptionModalOpen,
@@ -29,7 +28,7 @@ const Index = () => {
     handleAddException,
     handleSaveException,
     handleRemoveException,
-    
+
     // Assignments
     assignments,
     isAssignmentModalOpen,
@@ -38,7 +37,7 @@ const Index = () => {
     handleAddAssignmentForCooperator,
     handleSaveAssignment,
     handleRemoveAssignment,
-    
+
     // Save
     handleSaveScale,
   } = useScheduleState();
@@ -54,25 +53,22 @@ const Index = () => {
         endDate={endDate}
         onEndDateChange={setEndDate}
         onSave={handleSaveScale}
-        
         // Cooperators
         cooperatorsWithFlags={cooperatorsWithFlags}
         selectedCooperatorIds={selectedCooperatorIds}
         onToggleCooperator={handleToggleCooperator}
         onAddExceptionForCooperator={handleAddExceptionForCooperator}
         onAddAssignmentForCooperator={handleAddAssignmentForCooperator}
-        
         // Exceptions
         exceptions={exceptions}
         onAddException={handleAddException}
         onRemoveException={handleRemoveException}
-        
         // Assignments
         assignments={assignments}
         onAddAssignment={() => setIsAssignmentModalOpen(true)}
         onRemoveAssignment={handleRemoveAssignment}
       />
-      
+
       <ExceptionModal
         isOpen={isExceptionModalOpen}
         onClose={() => setIsExceptionModalOpen(false)}
@@ -80,7 +76,7 @@ const Index = () => {
         cooperators={mockCooperators}
         selectedCooperatorId={selectedCooperatorForException}
       />
-      
+
       <ScheduleAssignmentModal
         isOpen={isAssignmentModalOpen}
         onClose={() => setIsAssignmentModalOpen(false)}

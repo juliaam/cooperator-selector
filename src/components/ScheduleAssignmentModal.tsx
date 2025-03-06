@@ -1,12 +1,22 @@
-
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import DatePicker from "./DatePicker";
 import { Cooperator } from "./CooperatorCard";
-import { format } from "date-fns";
 
 interface ScheduleAssignmentModalProps {
   isOpen: boolean;
@@ -30,17 +40,19 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
   selectedCooperatorId,
 }) => {
   const [cooperatorId, setCooperatorId] = useState(selectedCooperatorId || "");
-  const [assignmentDate, setAssignmentDate] = useState<Date | undefined>(undefined);
+  const [assignmentDate, setAssignmentDate] = useState<Date | undefined>(
+    undefined
+  );
 
   const handleSave = () => {
     if (!cooperatorId || !assignmentDate) return;
-    
+
     onSave({
       cooperatorId,
       date: assignmentDate,
       id: crypto.randomUUID(),
     });
-    
+
     handleClose();
   };
 
@@ -50,20 +62,20 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
     onClose();
   };
 
-  const isValid = cooperatorId && assignmentDate;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] animate-slide-up">
+      <DialogContent className="animate-slide-up sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Agendar Cooperador</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            Agendar Cooperador
+          </DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="cooperator">Cooperador</Label>
-            <Select 
-              value={cooperatorId} 
+            <Select
+              value={cooperatorId}
               onValueChange={setCooperatorId}
               disabled={!!selectedCooperatorId}
             >
@@ -81,10 +93,10 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label>Data do Agendamento</Label>
-            <DatePicker 
-              date={assignmentDate} 
-              onSelect={setAssignmentDate} 
+            <Label>Data da escolha</Label>
+            <DatePicker
+              date={assignmentDate}
+              onSelect={setAssignmentDate}
               label="Selecione a data"
             />
           </div>
@@ -94,9 +106,7 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
           <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={!isValid}>
-            Agendar
-          </Button>
+          <Button onClick={handleSave}>Agendar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

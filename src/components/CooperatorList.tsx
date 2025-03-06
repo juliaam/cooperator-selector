@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import CooperatorCard, { Cooperator } from "./CooperatorCard";
 import { Search, Users, UserCheck } from "lucide-react";
@@ -26,50 +25,59 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
-  
-  const filteredCooperators = allCooperators.filter(coop => 
-    coop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    coop.role.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const filteredCooperators = allCooperators.filter(
+    (coop) =>
+      coop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      coop.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
-  const selectedCooperators = filteredCooperators.filter(coop => 
+
+  const selectedCooperators = filteredCooperators.filter((coop) =>
     selectedCooperatorIds.includes(coop.id)
   );
-  
-  const unselectedCooperators = filteredCooperators.filter(coop => 
-    !selectedCooperatorIds.includes(coop.id)
+
+  const unselectedCooperators = filteredCooperators.filter(
+    (coop) => !selectedCooperatorIds.includes(coop.id)
   );
-  
-  const displayCooperators = activeTab === "all" 
-    ? [...selectedCooperators, ...unselectedCooperators]
-    : selectedCooperators;
+
+  const displayCooperators =
+    activeTab === "all"
+      ? [...selectedCooperators, ...unselectedCooperators]
+      : selectedCooperators;
 
   return (
-    <div className={cn("flex flex-col h-full", className)}>
-      <div className="mb-2 flex items-center gap-2">
+    <div className={cn("flex h-full flex-col", className)}>
+      <div className="mb-2 flex items-center gap-2 px-2 py-2">
         <div className="relative flex-1">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             placeholder="Buscar cooperadores..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 h-8 text-sm"
+            className="h-8 pl-8 text-sm"
           />
         </div>
-        
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "selected")} className="flex-shrink-0">
+
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as "all" | "selected")}
+          className="flex-shrink-0"
+        >
           <TabsList className="h-8">
-            <TabsTrigger value="all" className="text-xs px-2 py-1 h-6 gap-1">
+            <TabsTrigger value="all" className="h-6 gap-1 px-2 py-1 text-xs">
               <Users className="h-3 w-3" />
               <span className="hidden sm:inline">Todos</span>
-              <span className="ml-1 text-xs bg-muted px-1 py-0.5 rounded-full">
+              <span className="ml-1 rounded-full bg-muted px-1 py-0.5 text-xs">
                 {allCooperators.length}
               </span>
             </TabsTrigger>
-            <TabsTrigger value="selected" className="text-xs px-2 py-1 h-6 gap-1">
+            <TabsTrigger
+              value="selected"
+              className="h-6 gap-1 px-2 py-1 text-xs"
+            >
               <UserCheck className="h-3 w-3" />
               <span className="hidden sm:inline">Selecionados</span>
-              <span className="ml-1 text-xs bg-primary/10 text-primary px-1 py-0.5 rounded-full">
+              <span className="ml-1 rounded-full bg-primary/10 px-1 py-0.5 text-xs text-primary">
                 {selectedCooperatorIds.length}
               </span>
             </TabsTrigger>
@@ -77,14 +85,13 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
         </Tabs>
       </div>
 
-      <div className="text-xs text-muted-foreground mb-2 px-0.5">
-        {activeTab === "all" 
-          ? `${filteredCooperators.length} cooperadores encontrados` 
-          : `${selectedCooperatorIds.length} cooperadores selecionados`
-        }
+      <div className="mb-2 px-0.5 text-xs text-muted-foreground">
+        {activeTab === "all"
+          ? `${filteredCooperators.length} cooperadores encontrados`
+          : `${selectedCooperatorIds.length} cooperadores selecionados`}
       </div>
-      
-      <ScrollArea className="flex-1 -mx-1 px-1">
+
+      <ScrollArea className="-mx-1 flex-1 px-1 pr-4">
         <div className="space-y-2 pb-2">
           {displayCooperators.length > 0 ? (
             displayCooperators.map((cooperator) => (
@@ -99,15 +106,16 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
             ))
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="bg-muted w-12 h-12 flex items-center justify-center rounded-full mb-2">
+              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Users className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="font-medium text-sm mb-1">Nenhum cooperador encontrado</h3>
-              <p className="text-xs text-muted-foreground max-w-xs">
-                {activeTab === "all" 
+              <h3 className="mb-1 text-sm font-medium">
+                Nenhum cooperador encontrado
+              </h3>
+              <p className="max-w-xs text-xs text-muted-foreground">
+                {activeTab === "all"
                   ? "Tente ajustar sua busca ou adicione novos cooperadores."
-                  : "Selecione cooperadores para incluir na escala."
-                }
+                  : "Selecione cooperadores para incluir na escala."}
               </p>
             </div>
           )}

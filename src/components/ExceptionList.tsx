@@ -1,14 +1,19 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Plus, X } from "lucide-react";
 import { format } from "date-fns";
-import { Cooperator } from './CooperatorCard';
-import { ExceptionData } from './ExceptionModal';
-import { cn } from '@/lib/utils';
+import { Cooperator } from "./CooperatorCard";
+import { ExceptionData } from "./ExceptionModal";
+import { cn } from "@/lib/utils";
 
 interface ExceptionListProps {
   exceptions: Array<ExceptionData & { id: string }>;
@@ -18,7 +23,15 @@ interface ExceptionListProps {
   className?: string;
 }
 
-const weekdayNames = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+const weekdayNames = [
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+];
 
 const ExceptionList: React.FC<ExceptionListProps> = ({
   exceptions,
@@ -28,13 +41,14 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
   className,
 }) => {
   return (
-    <Card className={cn("flex flex-col h-full", className)}>
-      <CardHeader className="pb-2 flex-shrink-0">
+    <Card className={cn("flex h-full flex-col", className)}>
+      <CardHeader className="flex-shrink-0 pb-2">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg">Exceções</CardTitle>
             <CardDescription className="text-xs">
-              Adicione dias específicos ou recorrentes onde um cooperador não pode participar
+              Adicione dias específicos ou recorrentes onde um cooperador não
+              pode participar
             </CardDescription>
           </div>
           <Button onClick={onAddException} size="sm" className="gap-1">
@@ -43,30 +57,40 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-2 pt-0 overflow-hidden">
+      <CardContent className="flex-1 overflow-hidden p-2 pt-0">
         <ScrollArea className="h-full">
           {exceptions.length > 0 ? (
             <div className="space-y-2 pr-2">
               {exceptions.map((exception) => {
-                const cooperator = cooperators.find(c => c.id === exception.cooperatorId);
-                
+                const cooperator = cooperators.find(
+                  (c) => c.id === exception.cooperatorId
+                );
+
                 return (
-                  <div key={exception.id} className="flex items-center gap-3 p-3 bg-secondary rounded-md group">
-                    <div className="bg-secondary-foreground/5 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div
+                    key={exception.id}
+                    className="group flex items-center gap-3 rounded-md bg-secondary p-3"
+                  >
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-secondary-foreground/5">
                       {exception.type === "one-time" ? (
                         <Calendar className="h-5 w-5 text-primary" />
                       ) : (
                         <Clock className="h-5 w-5 text-primary" />
                       )}
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
+
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium truncate">
+                        <span className="truncate font-medium">
                           {cooperator?.name || "Cooperador"}
                         </span>
-                        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
-                          {exception.type === "one-time" ? "Data única" : "Recorrente"}
+                        <Badge
+                          variant="outline"
+                          className="border-primary/20 bg-primary/5 text-primary"
+                        >
+                          {exception.type === "one-time"
+                            ? "Data única"
+                            : "Recorrente"}
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
@@ -77,11 +101,11 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
                         ) : null}
                       </div>
                     </div>
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" 
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
                       onClick={() => onRemoveException(exception.id)}
                     >
                       <X className="h-4 w-4" />
@@ -91,15 +115,23 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center py-4">
-              <div className="bg-muted w-12 h-12 flex items-center justify-center rounded-full mb-2">
+            <div className="flex h-full flex-col items-center justify-center py-4 text-center">
+              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Calendar className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="font-medium text-sm mb-1">Nenhuma exceção adicionada</h3>
-              <p className="text-xs text-muted-foreground max-w-xs mb-2">
-                Adicione exceções para dias específicos ou recorrentes onde um cooperador não pode participar da escala.
+              <h3 className="mb-1 text-sm font-medium">
+                Nenhuma exceção adicionada
+              </h3>
+              <p className="mb-2 max-w-xs text-xs text-muted-foreground">
+                Adicione exceções para dias específicos ou recorrentes onde um
+                cooperador não pode participar da escala.
               </p>
-              <Button onClick={onAddException} variant="outline" size="sm" className="gap-1">
+              <Button
+                onClick={onAddException}
+                variant="outline"
+                size="sm"
+                className="gap-1"
+              >
                 <Plus className="h-3 w-3" />
                 <span>Adicionar Exceção</span>
               </Button>
