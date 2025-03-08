@@ -3,9 +3,12 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Cooperator } from '@/components/CooperatorCard';
 import { ExceptionData } from '@/components/ExceptionModal';
 import { AssignmentData } from '@/components/ScheduleAssignmentModal';
+import { scheduleFormSchema, ScheduleFormValues } from '@/schemas/scheduleFormSchema';
 
 // Mock data for initial cooperators
 export const mockCooperators: Cooperator[] = [
@@ -24,15 +27,19 @@ export const mockCooperators: Cooperator[] = [
 ];
 
 export const useScheduleState = () => {
-  // Scale details
-  const [scaleName, setScaleName] = useState("Nova Escala");
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  
-  // Cooperator selection
-  const [selectedCooperatorIds, setSelectedCooperatorIds] = useState<string[]>(
-    mockCooperators.slice(0, 8).map(c => c.id) // First 8 cooperators pre-selected
-  );
+  // Use React Hook Form instead of separate states
+  const form = useForm<ScheduleFormValues>({
+    resolver: zodResolver(scheduleFormSchema),
+    defaultValues: {
+      scaleName: "Nova Escala",
+      startDate: undefined,
+      endDate: undefined,
+      selectedCooperatorIds: mockCooperators.slice(0, 8).map(c => c.id), // First 8 cooperators pre-selected
+    },
+  });
+
+  // Get form values for easier access
+  const { scaleName, startDate, endDate, selectedCooperatorIds } = form.watch();
   
   // Exceptions
   const [exceptions, setExceptions] = useState<Array<ExceptionData & { id: string }>>([]);
@@ -57,11 +64,12 @@ export const useScheduleState = () => {
   
   // Toggle cooperator selection
   const handleToggleCooperator = (id: string) => {
-    setSelectedCooperatorIds(prev => 
-      prev.includes(id) 
-        ? prev.filter(cooperatorId => cooperatorId !== id)
-        : [...prev, id]
-    );
+    const currentSelected = form.getValues().selectedCooperatorIds;
+    if (currentSelected.includes(id)) {
+      form.setValue('selectedCooperatorIds', currentSelected.filter(cooperatorId => cooperatorId !== id));
+    } else {
+      form.setValue('selectedCooperatorIds', [...currentSelected, id]);
+    }
   };
   
   // Open exception modal for a specific cooperator
@@ -121,14 +129,16 @@ export const useScheduleState = () => {
   
   // Save scale
   const handleSaveScale = () => {
-    if (!startDate || !endDate) {
+    const values = form.getValues();
+    
+    if (!values.startDate || !values.endDate) {
       toast.error("Erro ao salvar", {
         description: "Selecione as datas inicial e final da escala.",
       });
       return;
     }
     
-    if (selectedCooperatorIds.length === 0) {
+    if (values.selectedCooperatorIds.length === 0) {
       toast.error("Erro ao salvar", {
         description: "Selecione pelo menos um cooperador para a escala.",
       });
@@ -137,22 +147,22 @@ export const useScheduleState = () => {
     
     // Here you would implement the actual saving logic
     toast.success("Escala salva com sucesso!", {
-      description: `${selectedCooperatorIds.length} cooperadores incluídos na escala.`,
+      description: `${values.selectedCooperatorIds.length} cooperadores incluídos na escala.`,
     });
   };
 
   return {
-    // Scale details
+    // Form
+    form,
+    
+    // Scale details (for easier access)
     scaleName,
-    setScaleName,
     startDate,
-    setStartDate,
     endDate,
-    setEndDate,
+    selectedCooperatorIds,
     
     // Cooperators
     cooperatorsWithFlags,
-    selectedCooperatorIds,
     handleToggleCooperator,
     
     // Exceptions

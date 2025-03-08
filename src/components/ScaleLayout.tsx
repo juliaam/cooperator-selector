@@ -1,20 +1,18 @@
 
 import React from 'react';
+import { FormProvider } from 'react-hook-form';
 import CooperatorList from '@/components/CooperatorList';
 import ScaleHeader from '@/components/ScaleHeader';
 import ExceptionList from '@/components/ExceptionList';
 import ScheduleAssignmentList from '@/components/ScheduleAssignmentList';
 import { mockCooperators } from '@/hooks/useScheduleState';
 import { ExceptionData } from '@/components/ExceptionModal';
+import { ScheduleFormValues } from '@/schemas/scheduleFormSchema';
+import { UseFormReturn } from 'react-hook-form';
 
 interface ScaleLayoutProps {
-  // Scale details
-  scaleName: string;
-  onScaleNameChange: (name: string) => void;
-  startDate: Date | undefined;
-  onStartDateChange: (date: Date | undefined) => void;
-  endDate: Date | undefined;
-  onEndDateChange: (date: Date | undefined) => void;
+  // Form
+  form: UseFormReturn<ScheduleFormValues>;
   onSave: () => void;
   
   // Cooperators
@@ -36,13 +34,8 @@ interface ScaleLayoutProps {
 }
 
 const ScaleLayout: React.FC<ScaleLayoutProps> = ({
-  // Scale details
-  scaleName,
-  onScaleNameChange,
-  startDate,
-  onStartDateChange,
-  endDate,
-  onEndDateChange,
+  // Form
+  form,
   onSave,
   
   // Cooperators
@@ -63,54 +56,50 @@ const ScaleLayout: React.FC<ScaleLayoutProps> = ({
   onRemoveAssignment,
 }) => {
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-background to-muted/30 overflow-hidden">
-      <div className="container mx-auto py-4 px-4 flex flex-col h-full">
-        <ScaleHeader
-          scaleName={scaleName}
-          onScaleNameChange={onScaleNameChange}
-          startDate={startDate}
-          onStartDateChange={onStartDateChange}
-          endDate={endDate}
-          onEndDateChange={onEndDateChange}
-          onSave={onSave}
-          className="mb-3"
-        />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 flex-1 overflow-hidden">
-          <div className="lg:col-span-2 overflow-hidden">
-            <div className="bg-card rounded-lg shadow-sm border h-full animate-fade-in flex flex-col">
-              <h2 className="text-xl font-semibold m-4 mb-2">Cooperadores</h2>
-              <CooperatorList
-                allCooperators={cooperatorsWithFlags}
-                selectedCooperatorIds={selectedCooperatorIds}
-                onToggle={onToggleCooperator}
-                onAddException={onAddExceptionForCooperator}
-                onAddAssignment={onAddAssignmentForCooperator}
-                className="flex-1 overflow-hidden"
+    <FormProvider {...form}>
+      <div className="h-screen flex flex-col bg-gradient-to-br from-background to-muted/30 overflow-hidden">
+        <div className="container mx-auto py-4 px-4 flex flex-col h-full">
+          <ScaleHeader
+            onSave={onSave}
+            className="mb-3"
+          />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 flex-1 overflow-hidden">
+            <div className="lg:col-span-2 overflow-hidden">
+              <div className="bg-card rounded-lg shadow-sm border h-full animate-fade-in flex flex-col">
+                <h2 className="text-xl font-semibold m-4 mb-2">Cooperadores</h2>
+                <CooperatorList
+                  allCooperators={cooperatorsWithFlags}
+                  selectedCooperatorIds={selectedCooperatorIds}
+                  onToggle={onToggleCooperator}
+                  onAddException={onAddExceptionForCooperator}
+                  onAddAssignment={onAddAssignmentForCooperator}
+                  className="flex-1 overflow-hidden"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-rows-2 gap-3 h-full animate-fade-in animation-delay-100">
+              <ExceptionList
+                exceptions={exceptions}
+                cooperators={mockCooperators}
+                onAddException={onAddException}
+                onRemoveException={onRemoveException}
+                className="h-full overflow-hidden"
+              />
+              
+              <ScheduleAssignmentList
+                assignments={assignments}
+                cooperators={mockCooperators}
+                onAddAssignment={onAddAssignment}
+                onRemoveAssignment={onRemoveAssignment}
+                className="h-full overflow-hidden"
               />
             </div>
           </div>
-          
-          <div className="grid grid-rows-2 gap-3 h-full animate-fade-in animation-delay-100">
-            <ExceptionList
-              exceptions={exceptions}
-              cooperators={mockCooperators}
-              onAddException={onAddException}
-              onRemoveException={onRemoveException}
-              className="h-full overflow-hidden"
-            />
-            
-            <ScheduleAssignmentList
-              assignments={assignments}
-              cooperators={mockCooperators}
-              onAddAssignment={onAddAssignment}
-              onRemoveAssignment={onRemoveAssignment}
-              className="h-full overflow-hidden"
-            />
-          </div>
         </div>
       </div>
-    </div>
+    </FormProvider>
   );
 };
 

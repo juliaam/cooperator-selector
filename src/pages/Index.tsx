@@ -7,17 +7,17 @@ import ScaleLayout from '@/components/ScaleLayout';
 
 const Index = () => {
   const {
-    // Scale details
+    // Form
+    form,
+    
+    // Scale details (for use in components that need direct access)
     scaleName,
-    setScaleName,
     startDate,
-    setStartDate,
     endDate,
-    setEndDate,
+    selectedCooperatorIds,
     
     // Cooperators
     cooperatorsWithFlags,
-    selectedCooperatorIds,
     handleToggleCooperator,
     
     // Exceptions
@@ -46,13 +46,8 @@ const Index = () => {
   return (
     <>
       <ScaleLayout
-        // Scale details
-        scaleName={scaleName}
-        onScaleNameChange={setScaleName}
-        startDate={startDate}
-        onStartDateChange={setStartDate}
-        endDate={endDate}
-        onEndDateChange={setEndDate}
+        // Form
+        form={form}
         onSave={handleSaveScale}
         
         // Cooperators

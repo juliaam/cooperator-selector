@@ -5,28 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Save, ArrowLeft, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import DatePicker from "./DatePicker";
+import { useFormContext } from "react-hook-form";
+import { ScheduleFormValues } from "@/schemas/scheduleFormSchema";
 
 interface ScaleHeaderProps {
-  scaleName: string;
-  onScaleNameChange: (name: string) => void;
-  startDate: Date | undefined;
-  onStartDateChange: (date: Date | undefined) => void;
-  endDate: Date | undefined;
-  onEndDateChange: (date: Date | undefined) => void;
   onSave: () => void;
   className?: string;
 }
 
 const ScaleHeader: React.FC<ScaleHeaderProps> = ({
-  scaleName,
-  onScaleNameChange,
-  startDate,
-  onStartDateChange,
-  endDate,
-  onEndDateChange,
   onSave,
   className,
 }) => {
+  const { register, formState, watch, setValue } = useFormContext<ScheduleFormValues>();
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
+
   return (
     <div className={cn("space-y-6", className)}>
       <div className="flex items-center justify-between">
@@ -48,8 +42,7 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
           </label>
           <Input
             id="scale-name"
-            value={scaleName}
-            onChange={(e) => onScaleNameChange(e.target.value)}
+            {...register("scaleName")}
             placeholder="Ex: Escala de Julho/2023"
             className="max-w-md"
           />
@@ -62,7 +55,7 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
             </label>
             <DatePicker 
               date={startDate} 
-              onSelect={onStartDateChange}
+              onSelect={(date) => setValue("startDate", date)}
               label="Data inicial"
             />
           </div>
@@ -73,7 +66,7 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
             </label>
             <DatePicker 
               date={endDate} 
-              onSelect={onEndDateChange}
+              onSelect={(date) => setValue("endDate", date)}
               label="Data final"
             />
           </div>
