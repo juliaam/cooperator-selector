@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DatePicker from "./DatePicker";
 import { Cooperator } from "./CooperatorCard";
-import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 interface ExceptionModalProps {
   isOpen: boolean;
@@ -23,6 +25,23 @@ export interface ExceptionData {
   date?: Date;
   weekday?: string;
 }
+
+// Schema for exception form
+const exceptionSchema = z.object({
+  type: z.enum(["one-time", "recurring"]),
+  cooperatorId: z.string().min(1, "Selecione um cooperador"),
+  date: z.date().optional(),
+  weekday: z.string().optional(),
+}).refine(data => {
+  if (data.type === "one-time" && !data.date) return false;
+  if (data.type === "recurring" && !data.weekday) return false;
+  return true;
+}, {
+  message: "Preencha os dados da exceção corretamente",
+  path: ["type"],
+});
+
+type ExceptionFormValues = z.infer<typeof exceptionSchema>;
 
 const weekdays = [
   { value: "0", label: "Domingo" },
@@ -41,36 +60,42 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
   cooperators,
   selectedCooperatorId,
 }) => {
-  const [exceptionType, setExceptionType] = useState<"one-time" | "recurring">("one-time");
-  const [cooperatorId, setCooperatorId] = useState(selectedCooperatorId || "");
-  const [exceptionDate, setExceptionDate] = useState<Date | undefined>(undefined);
-  const [weekday, setWeekday] = useState<string>("");
+  const form = useForm<ExceptionFormValues>({
+    resolver: zodResolver(exceptionSchema),
+    defaultValues: {
+      type: "one-time",
+      cooperatorId: selectedCooperatorId || "",
+      date: undefined,
+      weekday: "",
+    },
+  });
 
-  const handleSave = () => {
-    if (!cooperatorId) return;
-    
-    const exceptionData: ExceptionData = {
-      type: exceptionType,
-      cooperatorId,
-      ...(exceptionType === "one-time" ? { date: exceptionDate } : { weekday }),
-    };
-    
-    onSave(exceptionData);
+  const { watch, setValue, handleSubmit, reset, formState: { isValid } } = form;
+  const exceptionType = watch("type");
+  const cooperatorId = watch("cooperatorId");
+  const exceptionDate = watch("date");
+  const weekday = watch("weekday");
+
+  const handleSaveForm = handleSubmit((data) => {
+    onSave(data);
     handleClose();
-  };
+  });
 
   const handleClose = () => {
-    setExceptionType("one-time");
-    setCooperatorId(selectedCooperatorId || "");
-    setExceptionDate(undefined);
-    setWeekday("");
+    reset({
+      type: "one-time",
+      cooperatorId: selectedCooperatorId || "",
+      date: undefined,
+      weekday: "",
+    });
     onClose();
   };
 
-  const isValid = cooperatorId && (
-    (exceptionType === "one-time" && exceptionDate) || 
-    (exceptionType === "recurring" && weekday)
-  );
+  React.useEffect(() => {
+    if (selectedCooperatorId) {
+      setValue("cooperatorId", selectedCooperatorId);
+    }
+  }, [selectedCooperatorId, setValue]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -84,7 +109,7 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
             <Label htmlFor="cooperator">Cooperador</Label>
             <Select 
               value={cooperatorId} 
-              onValueChange={setCooperatorId}
+              onValueChange={(value) => setValue("cooperatorId", value)}
               disabled={!!selectedCooperatorId}
             >
               <SelectTrigger id="cooperator">
@@ -104,7 +129,7 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
             <Label>Tipo de Exceção</Label>
             <RadioGroup 
               value={exceptionType} 
-              onValueChange={(v) => setExceptionType(v as "one-time" | "recurring")}
+              onValueChange={(v) => setValue("type", v as "one-time" | "recurring")}
               className="flex flex-col space-y-1"
             >
               <div className="flex items-center space-x-2">
@@ -123,14 +148,17 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
               <Label>Data da Exceção</Label>
               <DatePicker 
                 date={exceptionDate} 
-                onSelect={setExceptionDate} 
+                onSelect={(date) => setValue("date", date)} 
                 label="Selecione a data"
               />
             </div>
           ) : (
             <div className="grid gap-2">
               <Label htmlFor="weekday">Dia da Semana</Label>
-              <Select value={weekday} onValueChange={setWeekday}>
+              <Select 
+                value={weekday || ""} 
+                onValueChange={(value) => setValue("weekday", value)}
+              >
                 <SelectTrigger id="weekday">
                   <SelectValue placeholder="Selecione o dia da semana" />
                 </SelectTrigger>
@@ -150,7 +178,7 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
           <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={!isValid}>
+          <Button onClick={handleSaveForm} disabled={!isValid}>
             Salvar Exceção
           </Button>
         </DialogFooter>

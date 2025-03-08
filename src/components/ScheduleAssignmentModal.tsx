@@ -1,12 +1,14 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DatePicker from "./DatePicker";
 import { Cooperator } from "./CooperatorCard";
-import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 interface ScheduleAssignmentModalProps {
   isOpen: boolean;
@@ -22,6 +24,16 @@ export interface AssignmentData {
   id: string;
 }
 
+// Schema for assignment form
+const assignmentSchema = z.object({
+  cooperatorId: z.string().min(1, "Selecione um cooperador"),
+  date: z.date({
+    required_error: "Selecione uma data",
+  }),
+});
+
+type AssignmentFormValues = z.infer<typeof assignmentSchema>;
+
 const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
   isOpen,
   onClose,
@@ -29,28 +41,39 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
   cooperators,
   selectedCooperatorId,
 }) => {
-  const [cooperatorId, setCooperatorId] = useState(selectedCooperatorId || "");
-  const [assignmentDate, setAssignmentDate] = useState<Date | undefined>(undefined);
+  const form = useForm<AssignmentFormValues>({
+    resolver: zodResolver(assignmentSchema),
+    defaultValues: {
+      cooperatorId: selectedCooperatorId || "",
+      date: undefined,
+    },
+  });
 
-  const handleSave = () => {
-    if (!cooperatorId || !assignmentDate) return;
-    
+  const { watch, setValue, handleSubmit, reset, formState: { isValid } } = form;
+  const cooperatorId = watch("cooperatorId");
+  const assignmentDate = watch("date");
+
+  const handleSaveForm = handleSubmit((data) => {
     onSave({
-      cooperatorId,
-      date: assignmentDate,
+      ...data,
       id: crypto.randomUUID(),
     });
-    
     handleClose();
-  };
+  });
 
   const handleClose = () => {
-    setCooperatorId(selectedCooperatorId || "");
-    setAssignmentDate(undefined);
+    reset({
+      cooperatorId: selectedCooperatorId || "",
+      date: undefined,
+    });
     onClose();
   };
 
-  const isValid = cooperatorId && assignmentDate;
+  React.useEffect(() => {
+    if (selectedCooperatorId) {
+      setValue("cooperatorId", selectedCooperatorId);
+    }
+  }, [selectedCooperatorId, setValue]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -64,7 +87,7 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
             <Label htmlFor="cooperator">Cooperador</Label>
             <Select 
               value={cooperatorId} 
-              onValueChange={setCooperatorId}
+              onValueChange={(value) => setValue("cooperatorId", value)}
               disabled={!!selectedCooperatorId}
             >
               <SelectTrigger id="cooperator">
@@ -84,7 +107,7 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
             <Label>Data do Agendamento</Label>
             <DatePicker 
               date={assignmentDate} 
-              onSelect={setAssignmentDate} 
+              onSelect={(date) => setValue("date", date)} 
               label="Selecione a data"
             />
           </div>
@@ -94,7 +117,7 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
           <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={!isValid}>
+          <Button onClick={handleSaveForm} disabled={!isValid}>
             Agendar
           </Button>
         </DialogFooter>

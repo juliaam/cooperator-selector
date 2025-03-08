@@ -17,7 +17,7 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
   onSave,
   className,
 }) => {
-  const { register, formState, watch, setValue } = useFormContext<ScheduleFormValues>();
+  const { register, formState: { errors }, watch, setValue } = useFormContext<ScheduleFormValues>();
   const startDate = watch("startDate");
   const endDate = watch("endDate");
 
@@ -46,6 +46,9 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
             placeholder="Ex: Escala de Julho/2023"
             className="max-w-md"
           />
+          {errors.scaleName && (
+            <p className="text-sm text-red-500">{errors.scaleName.message}</p>
+          )}
         </div>
         
         <div className="flex flex-col md:flex-row gap-4">
