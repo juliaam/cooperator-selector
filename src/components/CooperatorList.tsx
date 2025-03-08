@@ -5,11 +5,10 @@ import CooperatorCard, { Cooperator } from "./CooperatorCard";
 import { Search, Users, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useFormContext } from "react-hook-form";
 
 interface CooperatorListProps {
   allCooperators: Cooperator[];
-  selectedCooperatorIds: string[];
-  onToggle: (id: string) => void;
   onAddException: (id: string) => void;
   onAddAssignment: (id: string) => void;
   className?: string;
@@ -17,14 +16,16 @@ interface CooperatorListProps {
 
 const CooperatorList: React.FC<CooperatorListProps> = ({
   allCooperators,
-  selectedCooperatorIds,
-  onToggle,
   onAddException,
   onAddAssignment,
   className,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
+
+  const { watch, setValue } = useFormContext();
+
+  const selectedCooperatorIds = watch("selectedCooperators") || [];
 
   const filteredCooperators = allCooperators.filter(
     (coop) =>
@@ -44,6 +45,14 @@ const CooperatorList: React.FC<CooperatorListProps> = ({
     activeTab === "all"
       ? [...selectedCooperators, ...unselectedCooperators]
       : selectedCooperators;
+
+  const onToggle = (coopId: string) => {
+    const newSelected = selectedCooperatorIds.includes(coopId)
+      ? selectedCooperatorIds.filter((id) => id !== coopId)
+      : [...selectedCooperatorIds, coopId];
+
+    setValue("selectedCooperators", newSelected, { shouldValidate: true });
+  };
 
   return (
     <div className={cn("flex h-full flex-col", className)}>

@@ -1,90 +1,97 @@
-import React from "react";
-import { useScheduleState, mockCooperators } from "@/hooks/useScheduleState";
+import React, { useState } from "react";
+import { mockCooperators } from "@/hooks/useScheduleState";
 import ExceptionModal from "@/components/ExceptionModal";
-import ScheduleAssignmentModal from "@/components/ScheduleAssignmentModal";
+import ScheduleAssignmentModal, {
+  AssignmentData,
+} from "@/components/ScheduleAssignmentModal";
 import ScaleLayout from "@/components/ScaleLayout";
+import { FormProvider, useForm } from "react-hook-form";
+import type { ExceptionData } from "@/shared/types/Exception";
+import { toast } from "sonner";
 
 const Index = () => {
-  const {
-    // Scale details
-    scaleName,
-    setScaleName,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
+  const [isExceptionModalOpen, setIsExceptionModalOpen] = useState(false);
+  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
+  const [exceptions, setExceptions] = useState<ExceptionData[]>([]);
+  const [assignments, setAssignments] = useState<AssignmentData[]>([]);
+  const [selectedCooperatorForException, setSelectedCooperatorForException] =
+    useState("");
+  const [selectedCooperatorForAssignment, setSelectedCooperatorForAssignment] =
+    useState("");
 
-    // Cooperators
-    cooperatorsWithFlags,
-    selectedCooperatorIds,
-    handleToggleCooperator,
+  const methods = useForm();
+  const { handleSubmit } = methods;
 
-    // Exceptions
-    exceptions,
-    isExceptionModalOpen,
-    setIsExceptionModalOpen,
-    selectedCooperatorForException,
-    handleAddExceptionForCooperator,
-    handleAddException,
-    handleSaveException,
-    handleRemoveException,
+  const cooperatorsWithFlags = mockCooperators.map((cooperator) => ({
+    ...cooperator,
+    hasExceptions: exceptions.some(
+      (exception) => exception.cooperatorId === cooperator.id
+    ),
+    hasAssignments: assignments.some(
+      (assignment) => assignment.cooperatorId === cooperator.id
+    ),
+  }));
 
-    // Assignments
-    assignments,
-    isAssignmentModalOpen,
-    setIsAssignmentModalOpen,
-    selectedCooperatorForAssignment,
-    handleAddAssignmentForCooperator,
-    handleSaveAssignment,
-    handleRemoveAssignment,
+  const handleAddExceptionForCooperator = (coopId: string) => {
+    setSelectedCooperatorForException(coopId);
+    setIsExceptionModalOpen(true);
+  };
 
-    // Save
-    handleSaveScale,
-  } = useScheduleState();
+  const handleAddAssignmentForCooperator = (coopId: string) => {
+    setSelectedCooperatorForAssignment(coopId);
+    setIsAssignmentModalOpen(true);
+  };
+
+  const handleAddException = () => {
+    setSelectedCooperatorForException(null);
+    setIsExceptionModalOpen(true);
+  };
+
+  const handleRemoveException = (id: string) => {
+    // ver isso posteriormente
+    toast.success("Exceção removida");
+  };
+
+  const handleRemoveAssignment = (id: string) => {
+    toast.success("Agendamento removido");
+  };
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
 
   return (
-    <>
-      <ScaleLayout
-        // Scale details
-        scaleName={scaleName}
-        onScaleNameChange={setScaleName}
-        startDate={startDate}
-        onStartDateChange={setStartDate}
-        endDate={endDate}
-        onEndDateChange={setEndDate}
-        onSave={handleSaveScale}
-        // Cooperators
-        cooperatorsWithFlags={cooperatorsWithFlags}
-        selectedCooperatorIds={selectedCooperatorIds}
-        onToggleCooperator={handleToggleCooperator}
-        onAddExceptionForCooperator={handleAddExceptionForCooperator}
-        onAddAssignmentForCooperator={handleAddAssignmentForCooperator}
-        // Exceptions
-        exceptions={exceptions}
-        onAddException={handleAddException}
-        onRemoveException={handleRemoveException}
-        // Assignments
-        assignments={assignments}
-        onAddAssignment={() => setIsAssignmentModalOpen(true)}
-        onRemoveAssignment={handleRemoveAssignment}
-      />
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <ScaleLayout
+          scaleName="name"
+          monthName="month"
+          cooperatorsWithFlags={cooperatorsWithFlags}
+          onAddExceptionForCooperator={handleAddExceptionForCooperator}
+          onAddAssignmentForCooperator={handleAddAssignmentForCooperator}
+          exceptions={exceptions}
+          assignments={assignments}
+          onAddException={handleAddException}
+          onRemoveException={handleRemoveException}
+          onAddAssignment={() => setIsAssignmentModalOpen(true)}
+          onRemoveAssignment={handleRemoveAssignment}
+        />
 
-      <ExceptionModal
-        isOpen={isExceptionModalOpen}
-        onClose={() => setIsExceptionModalOpen(false)}
-        onSave={handleSaveException}
-        cooperators={mockCooperators}
-        selectedCooperatorId={selectedCooperatorForException}
-      />
+        <ExceptionModal
+          isOpen={isExceptionModalOpen}
+          onClose={() => setIsExceptionModalOpen(false)}
+          cooperators={mockCooperators}
+          selectedCooperatorId={selectedCooperatorForException}
+        />
 
-      <ScheduleAssignmentModal
-        isOpen={isAssignmentModalOpen}
-        onClose={() => setIsAssignmentModalOpen(false)}
-        onSave={handleSaveAssignment}
-        cooperators={mockCooperators}
-        selectedCooperatorId={selectedCooperatorForAssignment}
-      />
-    </>
+        <ScheduleAssignmentModal
+          isOpen={isAssignmentModalOpen}
+          onClose={() => setIsAssignmentModalOpen(false)}
+          cooperators={mockCooperators}
+          selectedCooperatorId={selectedCooperatorForAssignment}
+        />
+      </form>
+    </FormProvider>
   );
 };
 

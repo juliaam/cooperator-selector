@@ -4,22 +4,16 @@ import ScaleHeader from "@/components/ScaleHeader";
 import ExceptionList from "@/components/ExceptionList";
 import ScheduleAssignmentList from "@/components/ScheduleAssignmentList";
 import { mockCooperators } from "@/hooks/useScheduleState";
-import { ExceptionData } from "@/components/ExceptionModal";
+import { Button } from "./ui/button";
+import { Users2 } from "lucide-react";
 
 interface ScaleLayoutProps {
   // Scale details
   scaleName: string;
-  onScaleNameChange: (name: string) => void;
-  startDate: Date | undefined;
-  onStartDateChange: (date: Date | undefined) => void;
-  endDate: Date | undefined;
-  onEndDateChange: (date: Date | undefined) => void;
-  onSave: () => void;
+  monthName: string;
 
   // Cooperators
   cooperatorsWithFlags: typeof mockCooperators;
-  selectedCooperatorIds: string[];
-  onToggleCooperator: (id: string) => void;
   onAddExceptionForCooperator: (id: string) => void;
   onAddAssignmentForCooperator: (id: string) => void;
 
@@ -37,13 +31,10 @@ interface ScaleLayoutProps {
 const ScaleLayout: React.FC<ScaleLayoutProps> = ({
   // Scale details
   scaleName,
-  onScaleNameChange,
-  onSave,
+  monthName,
 
   // Cooperators
   cooperatorsWithFlags,
-  selectedCooperatorIds,
-  onToggleCooperator,
   onAddExceptionForCooperator,
   onAddAssignmentForCooperator,
 
@@ -62,19 +53,21 @@ const ScaleLayout: React.FC<ScaleLayoutProps> = ({
       <div className="container mx-auto flex h-full flex-col px-4 py-4">
         <ScaleHeader
           scaleName={scaleName}
-          onScaleNameChange={onScaleNameChange}
-          onSave={onSave}
+          monthName={monthName}
           className="mb-3"
         />
 
         <div className="grid flex-1 grid-cols-1 gap-3 overflow-hidden lg:grid-cols-3">
           <div className="overflow-hidden lg:col-span-2">
             <div className="flex h-full animate-fade-in flex-col rounded-lg border bg-card p-4 shadow-sm">
-              <h2 className="mb-2 text-xl font-semibold">Cooperadores</h2>
+              <div className="m-2 flex justify-between">
+                <h2 className="text-xl font-semibold">Cooperadores</h2>
+                <Button>
+                  Gerenciar cooperadores <Users2 />
+                </Button>
+              </div>
               <CooperatorList
                 allCooperators={cooperatorsWithFlags}
-                selectedCooperatorIds={selectedCooperatorIds}
-                onToggle={onToggleCooperator}
                 onAddException={onAddExceptionForCooperator}
                 onAddAssignment={onAddAssignmentForCooperator}
                 className="flex-1 overflow-hidden"

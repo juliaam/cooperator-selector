@@ -21,7 +21,6 @@ import { Cooperator } from "./CooperatorCard";
 interface ScheduleAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (assignment: AssignmentData) => void;
   cooperators: Cooperator[];
   selectedCooperatorId?: string;
 }
@@ -35,7 +34,6 @@ export interface AssignmentData {
 const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
   isOpen,
   onClose,
-  onSave,
   cooperators,
   selectedCooperatorId,
 }) => {
@@ -47,11 +45,11 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
   const handleSave = () => {
     if (!cooperatorId || !assignmentDate) return;
 
-    onSave({
-      cooperatorId,
-      date: assignmentDate,
-      id: crypto.randomUUID(),
-    });
+    // onSave({
+    //   cooperatorId,
+    //   date: assignmentDate,
+    //   id: crypto.randomUUID(),
+    // });
 
     handleClose();
   };

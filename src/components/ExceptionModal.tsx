@@ -18,26 +18,18 @@ import {
 } from "@/components/ui/select";
 import DatePicker from "./DatePicker";
 import { Cooperator } from "./CooperatorCard";
+import { ExceptionData } from "@/shared/types/Exception";
 
 interface ExceptionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (exception: ExceptionData) => void;
   cooperators: Cooperator[];
   selectedCooperatorId?: string;
-}
-
-export interface ExceptionData {
-  type: "one-time" | "recurring";
-  cooperatorId: string;
-  date?: Date;
-  weekday?: string;
 }
 
 const ExceptionModal: React.FC<ExceptionModalProps> = ({
   isOpen,
   onClose,
-  onSave,
   cooperators,
   selectedCooperatorId,
 }) => {
@@ -59,7 +51,6 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
       ...(exceptionType === "one-time" ? { date: exceptionDate } : { weekday }),
     };
 
-    onSave(exceptionData);
     handleClose();
   };
 

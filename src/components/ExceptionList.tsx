@@ -9,11 +9,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Plus, X } from "lucide-react";
+import { Calendar, Plus, X } from "lucide-react";
 import { format } from "date-fns";
 import { Cooperator } from "./CooperatorCard";
-import { ExceptionData } from "./ExceptionModal";
 import { cn } from "@/lib/utils";
+import { ExceptionData } from "@/shared/types/Exception";
 
 interface ExceptionListProps {
   exceptions: Array<ExceptionData & { id: string }>;
@@ -22,16 +22,6 @@ interface ExceptionListProps {
   onRemoveException: (id: string) => void;
   className?: string;
 }
-
-const weekdayNames = [
-  "Domingo",
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
-];
 
 const ExceptionList: React.FC<ExceptionListProps> = ({
   exceptions,
@@ -62,7 +52,7 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
           {exceptions.length > 0 ? (
             <div className="space-y-2 pr-2">
               {exceptions.map((exception) => {
-                const cooperator = cooperators.find(
+                const cooperator = cooperators?.find(
                   (c) => c.id === exception.cooperatorId
                 );
 
@@ -72,11 +62,7 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
                     className="group flex items-center gap-3 rounded-md bg-secondary p-3"
                   >
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-secondary-foreground/5">
-                      {exception.type === "one-time" ? (
-                        <Calendar className="h-5 w-5 text-primary" />
-                      ) : (
-                        <Clock className="h-5 w-5 text-primary" />
-                      )}
+                      <Calendar className="h-5 w-5 text-primary" />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -88,17 +74,15 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
                           variant="outline"
                           className="border-primary/20 bg-primary/5 text-primary"
                         >
-                          {exception.type === "one-time"
-                            ? "Data única"
-                            : "Recorrente"}
+                          Data única
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {exception.type === "one-time" && exception.date ? (
-                          <>Data: {format(exception.date, "dd/MM/yyyy")}</>
-                        ) : exception.weekday ? (
-                          <>Dia: {weekdayNames[parseInt(exception.weekday)]}</>
-                        ) : null}
+                        {exception.date && (
+                          <span>
+                            Data: {format(exception.date, "dd/MM/yyyy")}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -106,7 +90,7 @@ const ExceptionList: React.FC<ExceptionListProps> = ({
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
-                      onClick={() => onRemoveException(exception.id)}
+                      onClick={() => onRemoveException?.(exception.id)}
                     >
                       <X className="h-4 w-4" />
                     </Button>

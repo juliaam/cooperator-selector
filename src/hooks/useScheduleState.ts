@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Cooperator } from "@/components/CooperatorCard";
-import { ExceptionData } from "@/components/ExceptionModal";
 import { AssignmentData } from "@/components/ScheduleAssignmentModal";
 
-// Mock data for initial cooperators
 export const mockCooperators: Cooperator[] = [
   {
     id: "1",
@@ -83,20 +80,10 @@ export const mockCooperators: Cooperator[] = [
 ];
 
 export const useScheduleState = () => {
-  // Scale details
-  const [scaleName, setScaleName] = useState("Nova Escala");
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-
-  // Cooperator selection
-  const [selectedCooperatorIds, setSelectedCooperatorIds] = useState<string[]>(
-    mockCooperators.slice(0, 8).map((c) => c.id) // First 8 cooperators pre-selected
-  );
-
   // Exceptions
-  const [exceptions, setExceptions] = useState<
-    Array<ExceptionData & { id: string }>
-  >([]);
+  // const [exceptions, setExceptions] = useState<
+  //   Array<ExceptionData & { id: string }>
+  // >([]);
 
   // Exception modal
   const [isExceptionModalOpen, setIsExceptionModalOpen] = useState(false);
@@ -111,26 +98,6 @@ export const useScheduleState = () => {
   const [selectedCooperatorForAssignment, setSelectedCooperatorForAssignment] =
     useState<string | undefined>(undefined);
 
-  // Update cooperators with exception and assignment flags
-  const cooperatorsWithFlags = mockCooperators.map((cooperator) => ({
-    ...cooperator,
-    hasExceptions: exceptions.some(
-      (exception) => exception.cooperatorId === cooperator.id
-    ),
-    hasAssignments: assignments.some(
-      (assignment) => assignment.cooperatorId === cooperator.id
-    ),
-  }));
-
-  // Toggle cooperator selection
-  const handleToggleCooperator = (id: string) => {
-    setSelectedCooperatorIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((cooperatorId) => cooperatorId !== id)
-        : [...prev, id]
-    );
-  };
-
   // Open exception modal for a specific cooperator
   const handleAddExceptionForCooperator = (cooperatorId: string) => {
     setSelectedCooperatorForException(cooperatorId);
@@ -144,27 +111,27 @@ export const useScheduleState = () => {
   };
 
   // Save exception
-  const handleSaveException = (exceptionData: ExceptionData) => {
-    const newException = {
-      ...exceptionData,
-      id: uuidv4(),
-    };
+  // const handleSaveException = (exceptionData: ExceptionData) => {
+  //   const newException = {
+  //     ...exceptionData,
+  //     id: uuidv4(),
+  //   };
 
-    setExceptions((prev) => [...prev, newException]);
+  //   setExceptions((prev) => [...prev, newException]);
 
-    const cooperator = mockCooperators.find(
-      (c) => c.id === exceptionData.cooperatorId
-    );
-    toast.success("Exceção adicionada", {
-      description: `Exceção adicionada para ${cooperator?.name || "cooperador"}.`,
-    });
-  };
+  //   const cooperator = mockCooperators.find(
+  //     (c) => c.id === exceptionData.cooperatorId
+  //   );
+  //   toast.success("Exceção adicionada", {
+  //     description: `Exceção adicionada para ${cooperator?.name || "cooperador"}.`,
+  //   });
+  // };
 
   // Remove exception
-  const handleRemoveException = (id: string) => {
-    setExceptions((prev) => prev.filter((exception) => exception.id !== id));
-    toast.success("Exceção removida");
-  };
+  // const handleRemoveException = (id: string) => {
+  //   setExceptions((prev) => prev.filter((exception) => exception.id !== id));
+  //   toast.success("Exceção removida");
+  // };
 
   // Add assignment for a specific cooperator
   const handleAddAssignmentForCooperator = (cooperatorId: string) => {
@@ -192,49 +159,25 @@ export const useScheduleState = () => {
 
   // Save scale
   const handleSaveScale = () => {
-    if (!startDate || !endDate) {
-      toast.error("Erro ao salvar", {
-        description: "Selecione as datas inicial e final da escala.",
-      });
-      return;
-    }
-
-    if (selectedCooperatorIds.length === 0) {
-      toast.error("Erro ao salvar", {
-        description: "Selecione pelo menos um cooperador para a escala.",
-      });
-      return;
-    }
-
     // Here you would implement the actual saving logic
     toast.success("Escala salva com sucesso!", {
-      description: `${selectedCooperatorIds.length} cooperadores incluídos na escala.`,
+      description: `${1} cooperadores incluídos na escala.`,
     });
   };
 
   return {
-    // Scale details
-    scaleName,
-    setScaleName,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-
-    // Cooperators
-    cooperatorsWithFlags,
-    selectedCooperatorIds,
-    handleToggleCooperator,
+    // selectedCooperatorIds,
+    // handleToggleCooperator,
 
     // Exceptions
-    exceptions,
+    // exceptions,
     isExceptionModalOpen,
     setIsExceptionModalOpen,
     selectedCooperatorForException,
     handleAddExceptionForCooperator,
     handleAddException,
     handleSaveException,
-    handleRemoveException,
+    // handleRemoveException,
 
     // Assignments
     assignments,
