@@ -54,8 +54,14 @@ const ScheduleAssignmentModal: React.FC<ScheduleAssignmentModalProps> = ({
   const assignmentDate = watch("date");
 
   const handleSaveForm = handleSubmit((data) => {
+    // Ensure we have required properties before saving
+    if (!data.date || !data.cooperatorId) {
+      return; // Don't save if missing required fields
+    }
+    
     onSave({
-      ...data,
+      cooperatorId: data.cooperatorId,
+      date: data.date,
       id: crypto.randomUUID(),
     });
     handleClose();

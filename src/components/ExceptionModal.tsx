@@ -77,7 +77,16 @@ const ExceptionModal: React.FC<ExceptionModalProps> = ({
   const weekday = watch("weekday");
 
   const handleSaveForm = handleSubmit((data) => {
-    onSave(data);
+    // Make sure all required fields are present based on the type
+    const exceptionData: ExceptionData = {
+      type: data.type,
+      cooperatorId: data.cooperatorId,
+      // Only include date or weekday properties as needed
+      ...(data.type === "one-time" && data.date ? { date: data.date } : {}),
+      ...(data.type === "recurring" && data.weekday ? { weekday: data.weekday } : {}),
+    };
+    
+    onSave(exceptionData);
     handleClose();
   });
 

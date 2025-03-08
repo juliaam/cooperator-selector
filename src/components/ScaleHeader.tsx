@@ -61,6 +61,9 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
               onSelect={(date) => setValue("startDate", date)}
               label="Data inicial"
             />
+            {errors.startDate && (
+              <p className="text-sm text-red-500">{errors.startDate.message}</p>
+            )}
           </div>
           
           <div className="flex-1 space-y-2">
@@ -72,6 +75,9 @@ const ScaleHeader: React.FC<ScaleHeaderProps> = ({
               onSelect={(date) => setValue("endDate", date)}
               label="Data final"
             />
+            {errors.endDate && (
+              <p className="text-sm text-red-500">{errors.endDate.message}</p>
+            )}
           </div>
         </div>
       </div>
